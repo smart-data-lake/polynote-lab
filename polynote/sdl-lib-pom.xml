@@ -1,0 +1,107 @@
+<!-- this pom is used to collect all SDL dependencies to add them to polynote -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--
+	  By setting sdl-parent as parent you get proper dependency management for Spark and predefined plugin management
+	  Alternatively you could import Spark dependency management from sdl-parent with scope=import (or also directly from spark-parent),
+	  and need to copy all version properties from sdl-parent.pom into this pom.
+	-->
+	<parent>
+		<groupId>io.smartdatalake</groupId>
+		<artifactId>sdl-parent</artifactId>
+		<!--
+		  Set the smartdatalake version to use here.
+		  If version cannot be resolved, make sure maven central repository is defined in settings.xml and the corresponding profile activated.
+		-->
+		<version>2.6.0</version>
+	</parent>
+
+	<artifactId>sdl-lib</artifactId>
+
+	<repositories>
+		<!-- smartdatalake snapshots -->
+		<repository>
+			<id>ossrh</id>
+			<name>ossrh snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<releases><enabled>false</enabled></releases>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<!-- copy dependencies to target/lib folder -->
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<includeScope>runtime</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-core_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-deltalake_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!-- needed for polynote using repl -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-repl_${scala.minor.version}</artifactId>
+			<version>${spark.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.spark</groupId>
+					<artifactId>spark-mllib_${scala.minor.version}</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.spark</groupId>
+					<artifactId>spark-graphx_${scala.minor.version}</artifactId>
+				</exclusion>
+ 			</exclusions>
+		</dependency>
+
+		<!-- S3 -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-aws</artifactId>
+			<!--version>${hadoop.version}</version-->
+			<version>3.3.4</version>
+		</dependency>
+
+		<!-- needed for derby metastore -->
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-api-jdo</artifactId>
+			<version>4.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyclient</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+
+	</dependencies>
+
+</project>
