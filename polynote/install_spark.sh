@@ -1,12 +1,14 @@
 #!/bin/bash
 # This script is intended for use from the docker builds.
 
-set -e -x
+set -e
 
-SPARK_VERSION=${SPARK_VERSION:-"3.3.2"}
+echo ${SCALA_VERSION:?}
+echo ${SPARK_VERSION:?}
+echo ${HADOOP_VERSION:?}
 SPARK_VERSION_DIR="spark-${SPARK_VERSION}"
-
-SPARK_NAME="spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}"
+if [ "$SCALA_VERSION" == "2.13" ]; then SCALA_POSTFIX="-scala2.13"; fi
+SPARK_NAME="spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}${SCALA_POSTFIX}"
 
 pushd /opt
 rm -rf spark

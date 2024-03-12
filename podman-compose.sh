@@ -8,7 +8,9 @@
 # Run this script from the base directory of the repository
 
 #podman build -f metastore/Dockerfile -t metastore
+set -e
 podman build -v ~/.m2/repository:/mnt/.mvnrepo -f polynote/Dockerfile -t polynote-lab
+set +e
 
 # creating a network (default network is missing dns support)
 podman network ls | grep polynote-lab

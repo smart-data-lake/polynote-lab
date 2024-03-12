@@ -30,27 +30,6 @@
 		</repository>
 	</repositories>
 
-	<build>
-		<plugins>
-			<!-- copy dependencies to target/lib folder -->
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<includeScope>runtime</includeScope>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
 	<dependencies>
 
 		<dependency>
@@ -63,23 +42,6 @@
 			<groupId>io.smartdatalake</groupId>
 			<artifactId>sdl-deltalake_${scala.minor.version}</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-
-		<!-- needed for polynote using repl -->
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-repl_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.spark</groupId>
-					<artifactId>spark-mllib_${scala.minor.version}</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.spark</groupId>
-					<artifactId>spark-graphx_${scala.minor.version}</artifactId>
-				</exclusion>
- 			</exclusions>
 		</dependency>
 
 		<!-- S3 -->

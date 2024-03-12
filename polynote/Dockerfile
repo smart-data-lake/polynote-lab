@@ -18,9 +18,8 @@ ARG DERBY_VERSION="10.14.2.0"
 #
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 ARG SCALA_VERSION
-
-COPY sdl-lib-pom.xml /home/app/
-RUN mvn -f /home/app/sdl-lib-pom.xml "-Dmaven.repo.local=/mnt/.mvnrepo" "-Pscala-$SCALA_VERSION" -Pcopy-libs-with-spark package
+COPY sdl-lib-pom.xml /opt/app/
+RUN mvn --quiet -f /opt/app/sdl-lib-pom.xml -Pcopy-libs -Pscala-$SCALA_VERSION -Dmaven.repo.local=/mnt/.mvnrepo dependency:copy-dependencies@copy-libs-exec
 
 
 #
@@ -37,10 +36,9 @@ ARG DIST_TAR="polynote-dist.tar.gz"
 USER root
 
 #install python
-RUN apt-get update -y && apt-get install -y procps wget python3 python3-dev python3-pip build-essential wget
+RUN apt-get update -y && apt-get install -y procps wget python3 python3-dev python3-pip build-essential
 
 WORKDIR /opt
-
 
 # install polynote
 RUN wget -q -O - https://github.com/polynote/polynote/releases/download/$POLYNOTE_VERSION/$DIST_TAR | tar xvz && rm -rf /opt/polynote/deps/2.11
@@ -50,33 +48,24 @@ RUN sed -i s/1.2.5/1.5.3/ ./polynote/requirements.txt && pip3 install -r ./polyn
 RUN wget -q -O - https://dlcdn.apache.org/spark/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//' | grep "spark-"$SPARK_VERSION | sed 's/spark-//' > /opt/spark.version
 RUN bash -l -c 'echo export SCALA_VERSION="$(cat /opt/spark.version)" >> /etc/bash.bashrc'
 
-
 # install spark distribution (polynote needs spark-submit command)
 COPY install_spark.sh .
-# convert line-endings to unix format and start script to install spark
-RUN sed -i 's/\r$//' install_spark.sh && chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) ./install_spark.sh
+RUN chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
-# copy sdl libraries with spark.
-# Copying with spark allows us to control all dependency versions through sdl-lib-pom.xml
-RUN mv $SPARK_HOME/jars/ $SPARK_HOME/jarsOrg/
-COPY --from=build /home/app/target/lib/*.jar $SPARK_HOME/jars/
-
+# copy sdl libraries
+#RUN mv $SPARK_HOME/jars/ $SPARK_HOME/jarsOrg/
+COPY --from=build /opt/app/target/lib/*.jar $SPARK_HOME/jars/
 
 # to wrap up, we create (safe)user
 ENV UID 1000
 ENV NB_USER polly
 
-RUN adduser --disabled-password \
-    --gecos "Default user" \
-    --uid ${UID} \
-    ${NB_USER}
+RUN adduser --disabled-password --gecos "Default user" --uid ${UID} ${NB_USER}
 
 # allow user access to the WORKDIR
 RUN chown -R ${NB_USER}:${NB_USER} /opt/
-
-#RUN chmod 777 $SPARK_HOME/jars/
 
 # switch to non-root user
 USER ${NB_USER}
