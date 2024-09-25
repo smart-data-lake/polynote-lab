@@ -7,11 +7,6 @@
 
 # Run this script from the base directory of the repository
 
-#podman build -f metastore/Dockerfile -t metastore
-set -e
-podman build -v ~/.m2/repository:/mnt/.mvnrepo -f polynote/Dockerfile -t polynote-lab
-set +e
-
 # creating a network (default network is missing dns support)
 podman network ls | grep polynote-lab
 if [ $? -ne 0 ]; then
@@ -54,6 +49,6 @@ if [ $? -ne 0 ]; then exit -1; fi
 
 
 #cleanup if polynote is stopped
-#podman stop s3
-#podman stop metastore
+podman stop s3
+podman stop metastore
 

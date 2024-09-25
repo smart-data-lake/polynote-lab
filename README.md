@@ -1,8 +1,5 @@
 ## Purpose
 
-ATTENTION: this is not yet working - a Polynote build with updated Scala Versions is needed to run this 
-(Java 17 needs Scala 2.12.15+, and similar Problem with outdated Scala 2.13.6). 
-
 Polynote-lab enables you to use Polynote with your SDLB project on your computer.
 This needs a metastore to share table metadata between Polynote and SDLB jobs,
 and storage which is accessible in the same place on both containers. 
@@ -13,15 +10,19 @@ Polynote-lab is therefore composed of the following components, each running in 
 - Metastore: a Derby database storing its data persistently under polynote-lab/data/_metastore
 - S3 Storage: S3proxy serving polynote-lab/data as bucket for Polynote and SDLB jobs.
 
+The corresponding Spark configurations are set by default in Polynotes config.yml.
+
 ## Setup
 
 Copy SDLB config files to polynote-lab/config folder
 
 Copy project jar file to polynote-lab/lib folder
 
-Run podman-compose.sh to start Metastore and S3 container in background, and then Polynote in foreground.  
+Run podman-compose.sh to start Metastore and S3 container in background, and Polynote in foreground.
 
 Add project jar file to your Notebook dependencies as type scala/jvm: `file:///mnt/lib/xyz.jar`
+
+Press Ctrl-C to stop Polynote container.
 
 ## Known Errors
 

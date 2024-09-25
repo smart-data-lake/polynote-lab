@@ -10,6 +10,10 @@ spark:
     spark.hadoop.javax.jdo.option.ConnectionDriverName: "org.apache.derby.jdbc.ClientDriver"
     spark.hadoop.javax.jdo.option.ConnectionUserName: "sa"
     spark.hadoop.javax.jdo.option.ConnectionPassword: "1234"
+    spark.hadoop.fs.s3a.path.style.access: "true"
+    spark.hadoop.fs.s3a.aws.credentials.provider: "org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider"
+    spark.hadoop.fs.s3a.bucket.data.endpoint: "http://s3:9000/"
+    spark.sql.warehouse.dir: "s3a://data/managed"
     spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
     spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     spark.ui.port: 4140
