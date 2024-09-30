@@ -18,13 +18,15 @@ Copy SDLB config files to polynote-lab/config folder
 
 Copy project jar file to polynote-lab/lib folder
 
-Run podman-compose.sh to start Metastore and S3 container in background, and Polynote in foreground.
+Run `./run.sh` to start Metastore and S3 container in background, and Polynote in foreground.
 
 Add project jar file to your Notebook dependencies as type scala/jvm: `file:///mnt/lib/xyz.jar`
 
 Press Ctrl-C to stop Polynote container.
 
 ## Known Errors
+
+For problems regarding Containers and Networking, see https://smartdatalake.ch/docs/getting-started/troubleshooting/docker-on-windows.
 
 ### Cannot update notebook files
 
