@@ -10,19 +10,26 @@ Polynote-lab is therefore composed of the following components, each running in 
 - Metastore: a Derby database storing its data persistently under polynote-lab/data/_metastore
 - S3 Storage: S3proxy serving polynote-lab/data as bucket for Polynote and SDLB jobs.
 
-The corresponding Spark configurations are set by default in Polynotes config.yml.
+The corresponding Spark configurations are set by default in Polynotes [config.yml](https://github.com/smart-data-lake/polynote-lab/blob/develop/polynote/config.yml).
 
 ## Setup
 
-Copy SDLB config files to polynote-lab/config folder
+1. Copy SDLB config files to polynote-lab/config folder
 
-Copy project jar file to polynote-lab/lib folder
+1. Copy project jar file to polynote-lab/lib folder
 
-Run `./run.sh` to start Metastore and S3 container in background, and Polynote in foreground.
+1. Run `./run.sh` to start Metastore and S3 container in background, and Polynote in foreground.
+Polynote should then be available on http://localhost:8192.
 
-Add project jar file to your Notebook dependencies as type scala/jvm: `file:///mnt/lib/xyz.jar`
+1. Add project jar file to your Notebook dependencies as type scala/jvm: `file:///mnt/lib/xyz.jar`
 
-Press Ctrl-C to stop Polynote container.
+1. Run SDLB Jobs using the same metastore and S3 storage using the spark properties defined in [config.yml](https://github.com/smart-data-lake/polynote-lab/blob/develop/polynote/config.yml). When using podman, add parameter "--network polynote-lab" in order to make metastore and s3 storage accessible.
+
+1. Press Ctrl-C to stop Polynote container.
+
+> [!TIP]
+> *Spark UI from Polynote*: On the right side of Polynote you find a link to the Spark UI for the current notebooks Spark session. 
+> If it doesn't work, try to replace 127.0.0.1 with localhost. If it still doesn't work and you are on Windows/WSL, replace with IP address of WSL (`wsl hostname -I`). 
 
 ## Known Errors
 
